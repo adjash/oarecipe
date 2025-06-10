@@ -81,8 +81,7 @@ const NewRecipe = () => {
         .upload(filePath, image);
 
       if (uploadError) {
-        alert("Image upload failed!");
-        console.error(uploadError);
+        new Error("Image upload failed!");
         setIsSubmitting(false);
         return;
       }
@@ -112,8 +111,7 @@ const NewRecipe = () => {
       .single();
 
     if (insertError || !recipeData) {
-      alert("Error saving recipe!");
-      console.error(insertError);
+      new Error("Error saving recipe!");
       setIsSubmitting(false);
       return;
     }
@@ -137,8 +135,7 @@ const NewRecipe = () => {
         .insert(ingredientRows);
 
       if (ingredientError) {
-        alert("Error saving ingredients!");
-        console.error(ingredientError);
+        new Error("Error saving ingredients!");
         setIsSubmitting(false);
         return;
       }

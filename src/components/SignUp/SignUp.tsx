@@ -10,21 +10,6 @@ const SignUp = () => {
   const { registerNewUser } = UserAuth();
   const navigate = useNavigate();
 
-  // const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError("");
-
-  //   const { data, error } = await registerNewUser(email, password);
-  //   if (error) {
-  //     setError(error.message);
-  //   } else if (data?.user) {
-  //     console.log("User signed up:", data.user);
-  //     navigate("/");
-  //   }
-
-  //   setLoading(false);
-  // };
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -35,7 +20,6 @@ const SignUp = () => {
     if (!result.success) {
       setError(result.error.message);
     } else if (result.user) {
-      console.log("User signed up:", result.user);
       navigate("/");
     }
 

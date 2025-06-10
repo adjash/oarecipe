@@ -22,7 +22,7 @@ const RecipePage = () => {
         .single();
 
       if (error) {
-        console.error("Error fetching recipe:", error);
+        new Error("Error fetching recipe:");
         setLoading(false);
         return;
       }
@@ -35,7 +35,7 @@ const RecipePage = () => {
         .eq("recipe_id", data.id);
 
       if (ingError) {
-        console.error("Error fetching ingredients:", ingError);
+        new Error("Error fetching ingredients:");
       } else {
         setIngredients(ingData);
       }

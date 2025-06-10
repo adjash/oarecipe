@@ -14,7 +14,7 @@ function App() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching recipes:", error);
+      throw new Error("Error fetching recipes:");
     } else {
       setRecipes(data);
     }

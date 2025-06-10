@@ -59,14 +59,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
       return { success: true, data };
     } catch (err) {
-      console.error(err);
+      new Error(`Unexpected error occured ${JSON.stringify(err)}`);
       return { success: false, error: "Unexpected error occurred." };
     }
   };
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error("there was an error", error);
+      new Error(`there was an error ${JSON.stringify(error)}`);
     }
   };
 
