@@ -81,7 +81,9 @@ const NewRecipe = () => {
       );
       const data = await res.json();
       const updated = [...ingredients];
-      updated[index].offResults = data.products.slice(0, 5);
+      //if we want to restrict how many results come thru
+      // updated[index].offResults = data.products.slice(0, 5);
+      updated[index].offResults = data.products;
       updated[index].showResults = true;
       setIngredients(updated);
     } catch (error) {
@@ -335,7 +337,7 @@ const NewRecipe = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-xl mt-8">
+    <div className="max-w-5xl mx-auto p-6 bg-white shadow-md rounded-xl mt-8">
       <h1 className="text-2xl font-bold mb-6">Create a New Recipe</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
@@ -388,7 +390,7 @@ const NewRecipe = () => {
               key={index}
               className="border border-gray-200 rounded-lg p-4 mb-4 relative"
             >
-              <div className="grid grid-cols-2 gap-2 mb-2">
+              <div className="grid grid-cols-1 gap-2 mb-2">
                 {/* Name input with search button */}
                 <div className="relative flex gap-2">
                   <input
@@ -418,6 +420,13 @@ const NewRecipe = () => {
                     )}
                   </button>
 
+                  <button
+                    type="button"
+                    onClick={() => setScanningIndex(index)}
+                    className="px-3 py-2 bg-green-500 text-white rounded-md"
+                  >
+                    Scan Barcode
+                  </button>
                   {/* Search Results Dropdown */}
                   {ingredient.showResults &&
                     ingredient.offResults.length > 0 && (
@@ -469,69 +478,95 @@ const NewRecipe = () => {
                       </div>
                     )}
                 </div>
-
-                <input
-                  type="number"
-                  placeholder="Quantity"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.quantity}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "quantity", e.target.value)
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Unit"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.unit}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "unit", e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Calories *"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.calories}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "calories", e.target.value)
-                  }
-                  required
-                />
-                <input
-                  type="number"
-                  placeholder="Protein (g)"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.protein}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "protein", e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Fat (g)"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.fat}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "fat", e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Carbs (g)"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={ingredient.carbs}
-                  onChange={(e) =>
-                    handleIngredientChange(index, "carbs", e.target.value)
-                  }
-                />
-                <button
-                  type="button"
-                  onClick={() => setScanningIndex(index)}
-                  className="px-3 py-2 bg-green-500 text-white rounded-md"
-                >
-                  Scan Barcode
-                </button>
+                <details>
+                  <summary>Nutritional Information: </summary>
+                  <div>
+                    <label htmlFor="quantity">Quantity: </label>
+                    <input
+                      type="number"
+                      id="quantity"
+                      placeholder="Quantity"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.quantity}
+                      onChange={(e) =>
+                        handleIngredientChange(
+                          index,
+                          "quantity",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="unit">Unit: </label>
+                    <input
+                      type="text"
+                      id="unit"
+                      placeholder="Unit"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.unit}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "unit", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="calories">Calories: </label>
+                    <input
+                      type="number"
+                      id="calories"
+                      placeholder="Calories *"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.calories}
+                      onChange={(e) =>
+                        handleIngredientChange(
+                          index,
+                          "calories",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="protein">Protein: </label>
+                    <input
+                      type="number"
+                      placeholder="Protein (g)"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.protein}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "protein", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="fat">Fat: </label>
+                    <input
+                      type="number"
+                      id="fat"
+                      placeholder="Fat (g)"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.fat}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "fat", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="carbs">Carbs: </label>
+                    <input
+                      type="number"
+                      id="carbs"
+                      placeholder="Carbs (g)"
+                      className="border border-gray-300 p-2 rounded-md"
+                      value={ingredient.carbs}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "carbs", e.target.value)
+                      }
+                    />
+                  </div>
+                </details>
               </div>
               <button
                 type="button"
