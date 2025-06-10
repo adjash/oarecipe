@@ -392,7 +392,7 @@ const NewRecipe = () => {
             >
               <div className="grid grid-cols-1 gap-2 mb-2">
                 {/* Name input with search button */}
-                <div className="relative flex gap-2">
+                <div className="relative flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     placeholder="Name (auto-searches as you type)"
