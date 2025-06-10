@@ -1,6 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import supabase from "../../utils/supabase";
 import { UserAuth } from "../../context/AuthContext";
+import BarcodeScanner from "react-qr-barcode-scanner";
 import { useNavigate } from "react-router";
 
 // Define the ingredient interface
@@ -14,7 +15,6 @@ interface Ingredient {
   fatPer100?: number;
   carbsPer100?: number;
 
-  // These now represent *total* values, computed from quantity:
   calories: string;
   protein: string;
   fat: string;
@@ -44,11 +44,31 @@ const NewRecipe = () => {
       showResults: false,
     },
   ]);
+  const [scanningIndex, setScanningIndex] = useState<number | null>(null);
+  const [barcodeError, setBarcodeError] = useState<string>("");
 
   const [servings, setServings] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean[]>([]);
   const navigate = useNavigate();
+
+  const fetchProductByBarcode = async (barcode: string, index: number) => {
+    try {
+      const res = await fetch(
+        `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+      );
+      const { status, product } = await res.json();
+      if (status !== 1 || !product) {
+        setBarcodeError("Product not found");
+        return;
+      }
+      selectOFFProduct(index, product);
+    } catch {
+      setBarcodeError("Fetch failed");
+    } finally {
+      setScanningIndex(null);
+    }
+  };
 
   const fetchOFFResults = async (query: string, index: number) => {
     if (query.length < 3) return;
@@ -95,22 +115,6 @@ const NewRecipe = () => {
     performSearch(query, index);
   };
 
-  // const handleIngredientChange = (
-  //   index: number,
-  //   field: keyof Ingredient,
-  //   value: string | boolean | any[]
-  // ) => {
-  //   const updated = [...ingredients];
-  //   (updated[index] as any)[field] = value;
-
-  //   if (field === "name" && typeof value === "string") {
-  //     // Hide results if query is too short
-  //     updated[index].showResults = false;
-  //     updated[index].offResults = [];
-  //   }
-
-  //   setIngredients(updated);
-  // };
   const handleIngredientChange = (
     index: number,
     field: keyof Ingredient,
@@ -148,26 +152,6 @@ const NewRecipe = () => {
     setIngredients(updated);
   };
 
-  // const selectOFFProduct = (index: number, product: any) => {
-  //   const updated = [...ingredients];
-  //   const nutriments = product.nutriments || {};
-
-  //   updated[index] = {
-  //     ...updated[index],
-  //     name:
-  //       product.product_name ||
-  //       (product.brands ? `${product.brands} ${product.product_name}` : ""),
-  //     calories: nutriments["energy-kcal_100g"]?.toString() || "",
-  //     protein: nutriments["proteins_100g"]?.toString() || "",
-  //     fat: nutriments["fat_100g"]?.toString() || "",
-  //     carbs: nutriments["carbohydrates_100g"]?.toString() || "",
-  //     image_url: product.image_url || "",
-  //     showResults: false,
-  //     offResults: [],
-  //   };
-
-  //   setIngredients(updated);
-  // };
   const selectOFFProduct = (index: number, product: any) => {
     const updated = [...ingredients];
     const nutriments = product.nutriments || {};
@@ -541,6 +525,13 @@ const NewRecipe = () => {
                     handleIngredientChange(index, "carbs", e.target.value)
                   }
                 />
+                <button
+                  type="button"
+                  onClick={() => setScanningIndex(index)}
+                  className="px-3 py-2 bg-green-500 text-white rounded-md"
+                >
+                  Scan Barcode
+                </button>
               </div>
               <button
                 type="button"
@@ -549,8 +540,39 @@ const NewRecipe = () => {
               >
                 Remove Ingredient
               </button>
+              {scanningIndex === index && (
+                <div className="relative w-full h-64 border border-gray-300 mt-2">
+                  <BarcodeScanner
+                    width={500}
+                    height={350}
+                    onUpdate={(err, result) => {
+                      if (err) {
+                        console.error(err);
+                        setBarcodeError("Camera error");
+                        return;
+                      }
+                      if (result) {
+                        fetchProductByBarcode(result.getText(), index);
+                        setScanningIndex(null);
+                        setBarcodeError("");
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs"
+                    onClick={() => setScanningIndex(null)}
+                  >
+                    Cancel
+                  </button>
+                  {barcodeError && (
+                    <p className="text-red-600 text-xs mt-1">{barcodeError}</p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
+
           <button
             type="button"
             onClick={addIngredient}
