@@ -6,6 +6,7 @@ import SignIn from "../components/SignIn/SignIn";
 import Page404 from "../components/404/404";
 import NewRecipe from "../components/NewRecipe/NewRecipe";
 import MyRecipes from "../components/MyRecipes/MyRecipes";
+import RecipePage from "../components/RecipePage/RecipePage";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      { path: "recipe/:slug", element: <RecipePage /> },
       { path: "*", element: <Page404 /> },
     ],
   },
